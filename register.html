@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+</head>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+
+
+<style>
+    .container{
+        
+        margin-top: 20px;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+
+    }
+    
+    a{
+        margin: 8px;
+        
+        
+        padding: 5px;
+        color: black;
+        text-decoration: none;
+        font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        font-weight: bold;
+        font-size:medium;
+        
+    }
+    body{
+        background-image: url('/register3.jpg');
+            height: 100vh;
+            background-size: cover;
+            background-repeat: no repeat;
+            background-position: 60%;
+    }
+    .topnav{
+        border: 1px solid white;
+        background-color: white;
+    }
+    h3,h5{
+        
+        font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+        font-weight: bold;
+        padding: 2px;
+        margin: auto;
+        
+    }
+    .heading{
+        margin-top: 50px;
+    }
+    #details{
+        margin-top: 20px;
+
+    }
+    .form-control{
+        padding: 5px;
+        margin: 3px;
+        width: 65%;
+    }
+    #users{
+            margin-top: 6px;
+            padding: 3px;
+            list-style: none;
+            font-weight: bolder;
+            
+        }
+    
+    
+    
+</style>
+<body>
+       
+    <div class="container">
+        
+        <div class="topnav">
+            <a  href="/home.html">HOME</a>
+            <a href="/AboutUs.html">NATURE-LAP</a>
+            <a href="/register.html">REGISTER</a>
+           
+          </div>
+
+          <form action="" id="details">
+            <div id="form-group">
+                <input type="text" class="form-control" id="name" placeholder="name" required>
+
+            </div>
+            <div id="form-group">
+              <input type="tel"  id="number" class="form-control" placeholder="0123456789" pattern="[0-9]{10}" required>
+
+            </div>
+            <div id="form-group">
+                <input type="email" class="form-control" id="mail" placeholder="email" required>
+
+            </div>
+            <div id="form-group">
+                <input type="date" class="form-control" id="date"  required>
+
+            </div>
+            <div id="form-group">
+                <input type="time" class="form-control" id="time"  required>
+
+           
+            <div id="form-group">
+                <input type="text" class="form-control" id="reason" placeholder="Reason to go"  required>
+
+            </div>
+           <div id="form-group">
+            <button class="form-control" id="btn" >REGISTER</button>
+
+           </div>
+            
+            
+          </form>
+          <div class="ui">
+            <ul id="users" class="form-control">
+    
+            </ul>
+          </div>
+          
+         
+        </div>
+    
+</body>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+
+<script>
+
+let form = document.getElementById('details');
+let users = document.getElementById('users');
+const API_URL = 'https://crudcrud.com/api/e73649c223d245a1af8286c471095d08';
+
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  let name = document.getElementById('name').value;
+  let mail = document.getElementById('mail').value;
+  let number = document.getElementById('number').value;
+  let date = document.getElementById('date').value;
+  let time = document.getElementById('time').value;
+  let reason = document.getElementById('reason').value;
+
+  console.log(`${name}:${mail}:${number}:${date}:${time}:${reason}`);
+
+  let myobj = {
+    name: name,
+    mail: mail,
+    number: number,
+    date: date,
+    time: time,
+    reason: reason
+  };
+
+  axios.post(API_URL + '/appointments', myobj)
+    .then(response => {
+      console.log(response.data);
+      let li = document.createElement('li');
+      li.appendChild(document.createTextNode(`${name}=>${number}`));
+      let deletebtn = document.createElement('button');
+      deletebtn.className = 'btnx float-right';
+
+      deletebtn.appendChild(document.createTextNode('X'));
+      li.appendChild(deletebtn);
+      let editbtn = document.createElement('button');
+      editbtn.className = 'btnx float-right'
+      editbtn.appendChild(document.createTextNode('Edit'));
+      li.appendChild(editbtn);
+
+      users.appendChild(li);
+      deletebtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        users.removeChild(li);
+        
+      });
+     deletebtn.addEventListener('click',(e)=>{
+        e.preventDefault();
+        users.removeChild(li);
+        const handleDelete = (id) => {
+        axios.delete(API_URL + '/appointments/' + response.data._id)
+        .then(response => {
+        console.log('Delete successful: ', response);
+    
+  })
+  .catch(error => {
+    console.error('Delete failed: ', error);
+  });
+}
+      
+     })
+
+
+      editbtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const updatedName = prompt("Enter new name:", name);
+        const updatedNumber = prompt("Enter new number:", number);
+        const updatedDate = prompt("Enter new date:", date);
+        const updatedTime = prompt("Enter new time:", time);
+
+        const updatedObj = {
+          name: updatedName,
+          mail: mail,
+          number: updatedNumber,
+          date: updatedDate,
+          time: updatedTime,
+          reason: reason
+        };
+
+        axios.put(API_URL + '/appointments/' + response.data._id, updatedObj)
+          .then(response => {
+            console.log(response.data);
+            li.innerHTML = `${response.data.name}=>${response.data.number}`;
+            li.appendChild(deletebtn);
+            li.appendChild(editbtn);
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      });
+    })
+    .catch(error => {
+      console.log(error);
+    });
+});
+window.addEventListener('load',()=>{
+    axios.get(API_URL + '/appointments')
+        .then(response => {
+            console.log(response.data);
+            response.data.forEach((item) => {
+                let li=document.createElement('li');
+                li.appendChild(document.createTextNode(`${item.name}=>${item.number}`));
+                let deletebtn = document.createElement('button');
+                deletebtn.className='btnx float-right';
+
+                deletebtn.appendChild(document.createTextNode('X'));
+                li.appendChild(deletebtn);
+                let editbtn = document.createElement('button');
+                editbtn.className='btnx float-right'
+                editbtn.appendChild(document.createTextNode('Edit'));
+                li.appendChild(editbtn);
+
+                users.appendChild(li);
+                deletebtn.addEventListener('click',(e)=>{
+        e.preventDefault();
+        users.removeChild(li);
+        const handleDelete = (id) => {
+        axios.delete(API_URL + '/appointments/' + response.data._id)
+        .then(response => {
+        console.log('Delete successful: ', response);
+    
+  })
+  .catch(error => {
+    console.error('Delete failed: ', error);
+  });
+}
+      
+     })
+
+
+
+    editbtn.addEventListener('click',(e)=>{
+                    e.preventDefault();
+                    const name = prompt("Enter new name:", item.name);
+                    const mail = prompt("Enter new mail:", item.mail);
+                    const number = prompt("Enter new number:", item.number);
+                    const date = prompt("Enter new date:", item.date);
+                    const time = prompt("Enter new time:", item.time);
+    })           
+    
+
+    
+   
+               
+            })
+        })
+    })
+
+
+
+
+</script>
+</html>
